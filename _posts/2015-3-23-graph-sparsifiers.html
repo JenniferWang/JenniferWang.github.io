@@ -1,0 +1,100 @@
+---
+layout: page
+tag: Algorithm
+excerpt: The running time of many graph algorithms depends on the number of edges. For a specific problem, say cut problem, we can transfer the original dense graph to some sparse graph which gives a good approximation in some measure.
+---
+<html>
+  <head>
+    <meta name="google-site-verification" content="Z6gBaBMynRob5VLGKChFgC6J-Qb8lXAtZPYN8o_CBO4" />
+    <title> Graph Sparsifiers </title>
+    <script type="text/javascript" 
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default">
+    </script>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js">
+    </script>
+  </head>
+
+  <body>
+    <p>
+      The running time of many graph algorithms depends on the number of edges. For a specific problem, say cut problem, we can transfer the original dense graph to some sparse graph which gives a good approximation in some measure.
+    </p>
+    <h2 class = "sec">
+      Naive Random Sampling
+    </h2>
+      <p>
+        Given a graph \(G = (V, E)\), for any cut \(S \subset V\), define \(f_G(S)\) as the weight of edges acrossing \(S\) and \(V - S\), i.e. \(Cutsize(S)\). Denote the new graph as \(H = (V, E', W)\), then
+      </p>
+      <ul>
+        <li> 
+          \(E[f_H(S)] = \sum_{e \in Cut(S)}p \cdot \frac{1}{p} = E[f_G(S)] = c\) </li>
+        <li>
+          For a specific cut \(S\), by Chernoff bound
+          \[
+            P(\text{for a specific cut $S$, } |f_H(S) - c| \ge \epsilon c) \le 2e ^{-\epsilon^2 pc / 2}
+          \]
+          If we set the probability \(p = \Omega(\frac{t\log n}{\epsilon^2 c})\), then RHS of the above is less than \(1 / n^t\). 
+          Use union bound and Karger's cut-counting theorem (If \(G\) has a min-cut of size \(c^*\), then the number of cuts of value \(\alpha c^*\) is at most \(n^{2\alpha}\))
+          \[
+            \begin{split}
+              &P(\text{$\exists$ cut $S$, s.t.} |f_H(S) - c| \ge \epsilon c))\\
+              \le & \sum_{\alpha = 1} ^{n^2} P(\text{$\exists$ cut $S$ with value $\alpha c^*$, s.t.} |f_H(S) - c| \ge \epsilon c)) \\
+              \le & \sum_{\alpha = 1} ^{n^2} n^{2\alpha}P(\text{for a specific cut $S$ with value $\alpha c^*$, s.t.} |f_H(S) - c| \ge \epsilon c)))\\
+              \le & \sum_{\alpha = 1} ^{n^2} n^{2\alpha} 2e ^{-\epsilon^2 pc / 2} =  \sum_{\alpha = 1} ^{n^2} n^{2\alpha} 2e ^{-\epsilon^2 p\alpha c^* / 2}
+            \end{split}
+          \] 
+          Under some circumstances, say \(c^* > \log n\), then the above bound becomes
+          \[
+            \begin{split}
+              \le & \sum_{\alpha = 1} ^{n^2} n^{2\alpha} 2e ^{-\epsilon^2 p \alpha \log n / 2} = \sum ^ {n ^2}_{\alpha = 1} n ^ {2\alpha}2\exp (\alpha \log(n)t)\\
+              = & 2 \sum ^{n ^ 2}_{\alpha = 1} \exp (2 \alpha \log(n) - \alpha \log(n)t) =  2 \sum ^{n ^ 2}_{\alpha = 1} \exp (\alpha \log(n)(2 - t))
+            \end{split}
+          \]
+          Now we can set \(t = 5\), then the RHS goes to zero as \(n\) grows.
+
+          Without this constrain on \(c^*\), the sparsification could be really bad. As we may expect \(p \cdot\) cut(\(S\)) \(= O(n^2 \frac{t\log n}{\epsilon^2 c})\) edges in \(H\). 
+        </li>
+      </ul>
+
+    <h2 class = "sec"> Sampling with effective resistance </h2>
+      <h3 class = "sec"> Some definitions </h3>
+        <ul> 
+          <li>
+            <b>Incidence Matrix</b> For an undirected graph \(G\), let \(B\) of size \(|E| \times |V|\) be the incidence matrix where \(B_{e, v} = 1\) if \(e\) starts from \(v\) and \(B_{e, u} = -1\) if \(e\) ends at \(u\). ( The direction is random for an undirected graph )
+          </li>
+          <li>
+            <b>Graph Laplacian</b> \(L = B^T B = D - A\) 
+            There are several properties of graph Laplacian
+            <ul>
+              <li>\(x^T L x = x^T B^T B x = \sum_{(u, v) \in E} (x_u - x_v)^ 2\)</li>
+              <li>For a connected graph, \(\ker(L) = \ker(B) = span(1)\) and thus \(rank(L) = n - 1\)</li>
+              <li>\(L\) is symmetric, semi-definite</li>
+              <li>Define the pseudoinverse of \(L\) as \(L ^ + \). \(L = \sum_{i = 1}^{n - 1} \lambda_i u_i u_i ^ T\), then 
+                \(L^ + = \sum_{i = 1}^{n - 1} \frac{1}{\lambda_i} u_i u_i ^ T\).</li>
+              <li> \(L ^ + L = L L ^ + = \sum_{i = 1}^{n - 1} u_i u_i ^ T\). PROJECTION onto the span of the nonzero eigenvectors of \(L\). \(LL^+\) is identity on \(img(L) = img(L^+) = span(1) ^ \perp\) </li>
+            </ul>
+          </li>
+          <li>
+            <b>Projection Matrix \(\Pi\)</b> \(\Pi = B L ^ + B^T\)
+            <ul>
+              <li> \(img(\Pi) \subseteq img(B)\) </li>
+              <li>\(img(\Pi) \supseteq img(B)\). For \( \forall y \in img(B)\), \(\exists x \in span(1) ^ \perp\) s.t. \(y = Bx\). Now consider \(\Pi Bx = B L ^ + B^T Bx = B L ^ + L x = Bx = y\), thus \(\Pi\) is actually a projection onto \(img(B)\) and \(img(\Pi) = img(B)\) (it's easy to verify that \(\Pi\Pi = \Pi\)).</li>
+              <li> As \(\Pi\) is a projection onto a space of \(dim = n - 1\), thus \(\Pi\) has exactly \(n - 1\) eigenvalues equal to 1, and one eigenvalue equal to 0. </li>
+              <li> \(trace(\Pi) = n - 1\), thus the sum of all effective resistances across edges of a graph is \(n  - 1\). </li>
+              <li> \(\Pi\) is symmetric, and has it's \(e'\)th diagonal entry equal to \(R_e\).</li>
+            </ul>
+          </li>
+        </ul>
+
+      <h3 class = "sec"> Main result </h3>
+        The algorithm output a new graph \(H\). Define a <b>diagonal matrix</b> \(S\). \(S\) is of size \(|E| \times |E|\), with diagonal entry \(S_{e, e} = \frac{d_e}{qp_e}\) (\(d_e\) is the number of times edge \(e\) was sampled).
+        <ul>
+          <li>\(E[S] = I_m\)</li>
+          <li>Graph Laplacian for \(H\) is \(L_H = B^T S B\), then \(E[L_H] = L_G\) (Here need to define weighted incidence matrix.)</li>
+          <li>\(\Pi_H \neq \Pi S \Pi\)(not a projection) but if \(\Pi S \Pi\) is close to \(\Pi \Pi\), we can then prove that \(L_H\) is relatively close to \(L_G\). </li>
+        </ul>
+    <h2> Reference </h2>
+      <ul>
+        <li><a href = "http://web.stanford.edu/class/cme305/Notes/14.pdf" >CME 305 Lecture Notes </a></li>
+      </ul>
+  </body>
+</html>

@@ -1,0 +1,38 @@
+---
+layout: post
+tag: Algorithm
+excerpt: 
+---
+
+<html>
+  <head>
+    <meta name="google-site-verification" content="Z6gBaBMynRob5VLGKChFgC6J-Qb8lXAtZPYN8o_CBO4" />
+    <title> Knapsack</title>
+    <script type="text/javascript" 
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default">
+    </script>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js">
+    </script>
+  </head>
+
+  <body>
+    <p>
+      Given a knapsack capacity \(B\), and a set \(N\) of \(n\) items. Each item has a weight \(w_i \ge 0\) and a profit \(p_i \ge\). The goal is to find a subset of the items \(S \subset N\) s.t. \(w(S) = \sum_{i \in S} w_i \le B\) and \(p(S) = \sum_{i \in S} p_i\) is maximized. 
+    </p>
+    <p>
+      If we further assume that the profits and weights are integers, we can find a dynamic programming solution to the problem in either \(O(nB)\) or \(O(nP)\) time, where \(P = \sum_{i \in N}p_i\). Even so, it gives a pseudo-polynomial time algorithm and the problem is still NP-hard.
+    </p>
+    <div class="highlight"><pre><code class="prettyprint" data-lang="python">
+def getMaxProfit(objects, capacity):
+  num = len(objects)
+  profit = [[0 for j in range(capacity)] for i in range(num + 1)]
+  for i in range(1, num + 1):
+    for c in range(1, capacity + 1):
+      if objects[i].weight > c:
+        profit[i][c] = profit[i - 1][c]
+      else:
+        profit[i][c] = max(profit[i - 1][c], profit[i][c - objects[i].weight])
+  return profit[num][capacity]
+    </code></pre></div>
+  </body>
+</html>

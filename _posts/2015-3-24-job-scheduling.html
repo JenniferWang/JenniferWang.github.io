@@ -1,0 +1,47 @@
+---
+layout: post
+tag: Algorithm
+excerpt: 
+---
+
+<html>
+  <head>
+    <meta name="google-site-verification" content="Z6gBaBMynRob5VLGKChFgC6J-Qb8lXAtZPYN8o_CBO4" />
+    <title> Job Scheduling / Makespan problem </title>
+    <script type="text/javascript" 
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default">
+    </script>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js">
+    </script>
+  </head>
+
+  <body>
+    <p>
+      Given \(m\) machines and \(n\) jobs with workload \(p_1, ..., p_n\), give a schedule that 
+      \[
+        \min_{\text{$m$ machines}}\max\{ \text{workload for a single machine}\}
+      \]
+    </p>
+    <p>
+      This problem is NP hard. We can use greedy algorithm to achieve \(4/3\) approximation and the bound is tight (TODO). If the number of distinct workload is restricted to \(k\) , there is a DP solution of \(O(n^{2k})\) which gives the exact solution to the corresponding decision problem : Can the \(m\) machines finish the job within \(T\) times. (Suppose the workload is the time it takes to complete the job for one machine. )
+    </p>
+    <p>
+      Suppose there are \(b_i\) jobs for workload \(p_i\), and we have \((b_1, ..., b_k)\) jobs in total. Let \(M(c_1, ..., c_k)\) denote the minimum number of machines needed to complete \((c_1, ..., c_k)\) jobs within time \(T\). Then it's easy to check whether \(M(c_1, ..., c_k) > 1\) and quitely clearly, \(M(0, ..., 0) = 0\)
+    </p>
+    <div class="highlight"><pre><code class="prettyprint" data-lang="python">
+def canFinish(jobs, num_machines)
+  """
+  jobs = {time : num}
+  """
+  num = [jobs[t] for t in jobs]
+  for c_1 in range(1, num[0] + 1):
+    for c_2 in range(1, num[1] + 1):
+      ...
+      for c_k in range(1, num[k - 1] + 1):
+        if M(c_1, ..., c_k) > 1:
+          S = {(j_1, ..., j_k)|j_i < c_i, for all i, M(j_1, ..., j_k) = 1 }
+          M(c_1, ..., c_k) = 1 + min([M(c_1 - j_1, ..., c_k - j_k) in S])
+  return M(num[0], ..., num[k -1]) <= num_machines
+    </code></pre></div>
+  </body>
+</html>

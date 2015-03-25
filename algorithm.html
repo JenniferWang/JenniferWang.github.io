@@ -1,0 +1,11 @@
+---
+layout: page
+---
+
+<div id="archive-algo">
+  {% for post in site.tags["Algorithm"] %}
+  <article class="archive-item">
+    <h4><a href="{{ root_url }}{{ post.url }}">{{post.title}}</a></h4>
+  </article>
+  {% endfor %}
+</div>
