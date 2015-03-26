@@ -27,7 +27,6 @@ html {
 
 body {
 	background: $white;
-  //font: 18px/1.4 $helvetica;
   font: 18px/1.4 'Open Sans';
   color: $darkGray;
 }
@@ -236,8 +235,8 @@ nav {
 
   a {
     margin-left: 20px;
-    //color: $darkGray;
-    color: white;
+    color: $darkGray;
+    //color: white;
     text-align: right;
     font-weight: 300;
     letter-spacing: 1px;
@@ -342,3 +341,4 @@ footer {
   text-align: right;
   font-size: 14px;
 }
+
