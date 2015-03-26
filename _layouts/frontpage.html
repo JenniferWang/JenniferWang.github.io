@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% if page.title %}{{ page.title }} – {% endif %}{{ site.name }} – {{ site.description }}</title>
+
+    {% include meta.html %}
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="{{ site.baseurl }}/style.css" />
+    <link rel="alternate" type="application/rss+xml" title="{{ site.name }} - {{ site.description }}" href="{{ site.baseurl }}/feed.xml" />
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
+
+    <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+  </head>
+
+  <body>
+
+    <div id="header" class="bg1">
+<!--       <div id="topnav">
+        <ul>
+          <li><a href="http://karpathy.github.io/">blog</a></li>
+        </ul>
+      </div> -->
+      <div id="headerblob">
+        <img src="https://farm8.staticflickr.com/7613/16744097410_03d60f66ef.jpg" class="img-profile img-circle imgme ">
+        <div id="headertext">
+          <div id="htname">{{ site.name }}</div>
+          <div id="htdesc">{{ site.description }}</div>
+          <div id="htem">jennifer.w0930_at_gmail.com</div>
+<!--           <div id="icons">
+            <div class="svgico">
+              <a href="https://twitter.com/karpathy"><img src="icons/03-twitter.svg"></a>
+            </div>
+            <div class="svgico">
+              <a href="https://plus.google.com/+AndrejKarpathy/posts"><img src="icons/80-google-plus.svg"></a>
+            </div>
+            <div class="svgico">
+              <a href="https://github.com/karpathy"><img src="icons/octocat.svg" width="56px"></a>
+            </div>
+          </div> -->
+        </div>
+          <div class="container">
+            <nav>
+              <a class="nav_link" href="{{ site.baseurl }}/tags/index.html">Archives</a>
+              <a class="nav_link" href="{{ site.baseurl }}/algorithm.html">Algorithm</a>
+              <a class="nav_link" href="{{ site.baseurl }}/about">About</a>
+            </nav>
+          </div>
+      </div>
+    </div>
+
+
+
+<!--     <div class="wrapper-masthead">
+      <div class="container">
+        <header class="masthead clearfix">
+          <a href="{{ site.baseurl }}/" class="site-avatar"><img src="{{ site.avatar }}" /></a>
+          <div class="site-info">
+            <h1 class="site-name"><a href="{{ site.baseurl }}/">{{ site.name }}</a></h1>
+            <p class="site-description">{{ site.description }}</p>
+          </div>
+
+
+        </header>
+      </div>
+    </div> -->
+
+
+
+    <div id="main" role="main" class="container">
+      {{ content }}
+    </div>
+
+    <div class="wrapper-footer">
+      <div class="container">
+        <footer class="footer">
+          {% include svg-icons.html %}
+        </footer>
+      </div>
+    </div>
+
+    {% include analytics.html %}
+  </body>
+</html>
