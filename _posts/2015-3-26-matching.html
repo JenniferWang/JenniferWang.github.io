@@ -16,10 +16,10 @@ excerpt:
   </head>
 
   <body>
-    <h3 class = "sec"> Unweighted Maximum Matching </h3>
+    <h2 class = "sec"> Maximum Matching </h2>
     <p>
       Use greedy algorthim, we can find a <b>maximal</b> matching, denote it as \(M\). If the <b>maximum</b> matching is \(M^*\), then \(|M| \ge \frac{1}{2} |M^*|\).
-      <div class = "claim"><!-- \footnote{Matching (graph theory), wikipedia} -->
+      <div class = "claim">
         If \(A\) and \(B\) are two maximal matching, then \(|A| \ge \frac{1}{2} |B|\) and \(|B| \ge \frac{1}{2} |A|\). 
       </div>
       <div class = "proof">
@@ -39,133 +39,42 @@ excerpt:
       </div>
     </p>
 
-    <h3 class = "sec"> Augmenting Path Algorithm </h3> <!-- \footnote{http://www.cs.dartmouth.edu/~ac/Teach/CS105-Winter05/Notes/kavathekar-scribe.pdf} -->
-    <p>
-      <div class = "definition" > A path \(P\) is called an <b>augmenting path</b> for \(M\) if
-        <ul>
-          <li> The two ends of \(P\) are unmatched by \(M\). </li>
-          <li> The edges of \(P\) alternate between edges \(\in M\) and edges \(\notin M\) </li>
-        </ul>
-      </div>
-      By <b>Berge's theorem</b> which states that a matching \(M\) is maximum iff it has no augmenting path, we have the following algorithm
-      <div class="highlight"><pre><code class="prettyprint" data-lang="python">
-  def findMaximumMatching(G):
-    match = {}
-    while True:
-      path = findAugmentingPath(G, match)
-      if not path:
-        break
-      match = flipPath(match, path)
-    return match
-      </code></pre></div>
-
-      Now the problem narrows down to how to find an augmenting path in \(G\) given \(M\). We consider bipartite graph first and then general graph.
-
-      <h4 class = "sec"> Finding Augmenting Path in Bipartite Graph </h4>
-      <p>
-        By intuition, we can use DFS to find an augmenting path. Pick an unmatched node as the root and do DFS. Alternatively pick edge in \(M\) and not in \(M\) until finding an unmatched node. However, it does not gaurantee to find an augmenting path if there is one. 
-      </p>
-      <p>
-        Consider the following undirected graph
-        <div class="highlight"><pre><code class="prettyprint" data-lang="python">
-  vertices = set([1, 2, 3, 4, 5])
-  edgeList = {1: set([2]), 2:set([1, 3, 6]), 3:set([2, 4]), \
-              4: set([3, 5]), 5: set([4, 6]), 6: set([2, 5])}
-  match = {2:3, 3:2, 4:5, 5:4}
-        </code></pre></div>
-        If we start from 6 and follow the path <span>6 &rarr; 5 &rarr; 4 &rarr; 3 &rarr; 2 &rarr; 1 </span> , we find an augmenting path. However, if we follow the path <span> 6 &rarr; 2 &rarr; 3 &rarr; 4 &rarr; 5 </span>, we can not find an augmenting path. The problem is that this is an odd cycle and two unmatched vertexes share one node. If there is no odd cycle, there is no problem. The complexity of the following algorithm is \(O(n / 2)\times O(m)\), where \(|V| = n\) and \(|E| = m\). Hopcroft and Karp improve the time complexity to \(O(m \sqrt{n})\)
-        <div class="highlight"><pre><code class="prettyprint" data-lang="python">
-class BipartiteGraph:
-  def __init__(self, edgeList, leftVertices):
-    self.edgeList = edgeList
-    self.leftVertices = leftVertices
-    self.match = {}
-    self.matched = set()
-    self.unmatched = set(edgeList.keys())
-
-  def _dfs(self, curr, path):
-    if self.augmentingPath:
-      return
-    visited = set(path)
-    if curr in self.leftVertices: 
-      for next in self.edgeList[curr]:
-        if next not in visited:
-          path.append( next )
-          if next in self.unmatched:
-            self.augmentingPath = path[:]
-            return
-          else:
-            self._dfs( next, path )
-          path.pop()
-      return None
-    else:
-      next = self.match[curr]
-      path.append( next )
-      self._dfs( next, path )
-      path.pop()
+    <h2 class = "sec"> Augmenting Path Algorithm </h2> 
+      Augmenting path algorithm can be used to find maximum matching (weighted/unweighted) in a bipartite graph. The same idea extends to a general graph. See <a href = "{{ site.baseurl }}/augmenting-path">this post</a> for details.
     
-  def findAugmentingPath(self):
-    """
-    bipartite graph = left parts union right parts
-    """
-    self.augmentingPath = []
-    for start in self.unmatched.intersection(self.leftVertices):
-      self._dfs(start, [start])
-      if self.augmentingPath:
-        return
-
-  def _flipPath(self, path):
-    for i in range(0, len(path) - 1, 2):
-      self.match[path[i]] = path[i + 1]
-      self.match[path[i + 1]] = path[i]
-
-    self.matched.add(path[0])
-    self.matched.add(path[-1])
-    self.unmatched.discard(path[0])
-    self.unmatched.discard(path[-1])
-
-  def findMaximumMatching(self):
-    while True:
-      self.findAugmentingPath()
-      if not self.augmentingPath:
-        break
-      self._flipPath(self.augmentingPath)
-    return self.match
-
-if __name__ == '__main__':
-  edgeList = {1: set([2, 6]), 2: set([1, 3, 5]), \
-    3: set([2]), 4: set([5]), 5: set([2, 4, 6]), 6: set([1, 5])}
-  leftVertices = set([1, 3, 5])
-  bipartite = BipartiteGraph(edgeList, leftVertices)
-  print bipartite.findMaximumMatching()
-        </code></pre></div>
-      </p>
-      <h4 class = "sec"> Finding Augmenting Path in General Graph </h4>
+    <h2 class = "sec"> Maximum Matching in Bipartite Graph </h2> 
       <p>
-        More complicated and takes \(O(m n^2)\) time. See <a href = "http://www.cs.dartmouth.edu/~ac/Teach/CS105-Winter05/Notes/kavathekar-scribe.pdf"> this </a> for details.
-      </p>
-    </p>
-
-    <h3 class = "sec"> Weighted Maximum Matching </h3>
-      <p>
-        The basic idea is to find the augmenting path which increases weights the most every time. Details can be found <a href = "http://www.cs.cornell.edu/Courses/cs6820/2012sp/Handouts/101-110.pdf"> here</a>.
+        Both Augmenting Path Algorithm and Max Flow Algorithm can be used to find maximum matching in a bipartite graph. We can actually describe this problem in the form of optimization problem. 
+        \[
+          \begin{split}
+            \max\text{ } &{\mathbf{1}^T x} \\
+            \text{s.t. } &Ax \le \mathbf{1}\\
+            &x \in \{0, 1\}
+          \end{split}
+        \]
+        where \(A\) is the node-edge incidence matrix and \(x\) is the indicate vector of dimension \(m\).
       </p>
       <p>
-        Another method is MaxFlow. But it can only find maximum weight matching in a bipartite graph.
+        This is an <i> Integer Programming Problem </i> and NP hard. However, when the constraint \(A\) is <a href = "{{ site.baseurl }}/totally-unimodular"><b>Totally Unimodular </b></a>, we can solve it just as a <i>Linear Programming Problem</i>.
       </p>
 
-    <h3 class = "sec"> Minimum Weight Perfect Matching and Cycle Cover </h3>
+
+    <h2 class = "sec"> Cycle Cover and Minimum Weight Perfect Matching</h2>
     <p>
-      A <b>perfect matching</b> is a matching which matches all vertices of the graph. That is, every vertex of the graph is incident to exactly one edge of the matching. <!-- \footnote{Matching (graph theory), wikipediea} --> The mini-weight perfect matching problem can be solved in polynomial time. 
+      A <b>perfect matching</b> is a matching which matches all vertices of the graph. That is, every vertex of the graph is incident to exactly one edge of the matching. The mini-weight perfect matching problem can be solved in polynomial time. 
     </p>
     <p>
       <div class = "definition"> <b>minimum weight cycle cover</b> of a graph: Let \(H = (V, E)\) be a directed graph with non-negative arc weights given by \(w: E \rightarrow R ^+\). 
       </div>
-      We wish to find a minimum weight collection of vertex-disjoint directed cycles in \(H\) such that every vertex is in exactly one of those cycles.<!--  \footnote{HW0/6, Spring 2011, CS 598CSC, University of Illinois}  -->We need this to give an approximation algo to the Asymmetric Traveling Salesman Problem (ATSP).
+      We wish to find a minimum weight collection of vertex-disjoint directed cycles in \(H\) such that every vertex is in exactly one of those cycles. We need this to give an approximation algo to the Asymmetric Traveling Salesman Problem (ATSP). For ATSP, there always exists a cycle cover, but for a general graph, there might be no cycle cover.
     </p>
-    <p>
-      <b>Algorithm</b>:
-        For each node \(v \in V\), split it into \(v^+\) and \(v^-\), where \(v^+\) is the `in-node' and \(v^-\) is the `out-node'. Solve the minimum perfect matching problem on the new graph. Done. TODO 
-    </p>
+    <div class = "algorithm">
+      For each node \(v \in V\), split it into \(v^+\) and \(v^-\), where \(v^+\) is the 'in-node' and \(v^-\) is the 'out-node'. Connect the edges accordingly and note that there is no edge between in-nodes and out-nodes. Thus, we actually get a bipartite graph. Now we can add a source node \(s\) and a sink node \(t\). Connect \(s\) to all 'out-nodes' and connect \(t\) to all 'in-nodes'. If we want to determine if there is a cycle cover, we can set all the capacity to 1 and run Max Flow on the graph. If the max flow equals \(n\), then there is a cycle cover. If we want to find the minimum cycle cover, we can either run Minimum Perfect Matching on the graph (without the source and sink nodes) or run Max Flow with modified capacity.  
+    </div>
+
+    <h2>References</h2>
+    <div><a href="http://en.wikipedia.org/wiki/Matching_%28graph_theory%29">Matching (graph theory), wikipedia</a></div>
+    <div><a href="http://www.cs.dartmouth.edu/~ac/Teach/CS105-Winter05/Notes/kavathekar-scribe.pdf">Lecture Notes @ dartmouth.edu</a></div>
+    <div><a href=""></a></div>
   </body>
 </html>

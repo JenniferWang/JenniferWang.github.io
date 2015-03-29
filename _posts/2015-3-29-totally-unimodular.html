@@ -1,0 +1,103 @@
+---
+layout: post
+tag: Algorithm
+excerpt: In the general case, Integer Programming Problem is NP-complete. However, in a special case, the IP problem can be solved by Linear Programming. 
+---
+
+<html>
+  <head>
+    <meta name="google-site-verification" content="Z6gBaBMynRob5VLGKChFgC6J-Qb8lXAtZPYN8o_CBO4" />
+    <title> Totally Unimodular Matrices(TUM) </title>
+    <script type="text/javascript" 
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default">
+    </script>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js">
+    </script>
+  </head>
+
+  <body> 
+    <p>
+      In the general case, Integer Programming Problem is NP-complete. However, in a special case, the IP problem can be solved by Linear Programming. 
+    </p>
+
+    <h2 class = "sec"> Totally Unimodular Matrices (TUM) </h2>
+    <div class = "definition">
+      A matrix \(A\) is <b>TUM</b> if every square submatrix \(M\) of \(A\) has \(\det(M) \in \{+1, -1, 0\}\). This indicates every entry of \(A\) should be +1, -1 or 0. 
+    </div>
+
+    <p>
+      <div class = "example">
+        Incidence matrix of a directed graph
+      </div>
+      <div class = "proof">
+        Suppose the incidence matrix \(S\) is \(|V| \times |E|\) and  \(e = (u, v) \in E\) iff \(M_{ue} = 1 \land M_{ve} = -1 \), Use induction on the size \(n\) of the submatrix \(M\). When \(n = 1\), it's trivial. When \(n > 1\), there are three cases.  
+        <ul>
+          <li> Some column of \(M\) is all zero, then \(\det(M) = 0\) </li>
+          <li> Some column of \(M\) has only one of \(\{+1, -1\}\), then induce on \(n - 1\) </li>
+          <li> All columns of \(M\) has two entries 1 and -1. Then the row sum yields <b>0</b>, indicating that \(\det(M) = 0\) </li>
+        </ul>
+      </div>
+    </p>
+
+    <p>
+      <div class = "example">
+        An undirected graph is bipartite iff its incidence matrix is TUM. In this example, we assume the incidence matrix is all 1. 
+      </div>
+      <div class = "proof">
+        <p>
+          \(\Leftarrow\): If the graph contains an odd cycle, the submatrix corresponding to the cycle has determinant 2, contradiction.
+        </p>
+        <p>
+          \(\Rightarrow\): Prove by induction. The first two cases are trivial and the same as Example 1. In the last case, all columns of \(M\) has exactly two 1. Now permutate the rows to split \(M\) into two halves, each representing a group. Now we can multiply the bottom half with -1 to make it a directed graph. Multiplying rows by -1 only changes the sign of the determinant. We then apply the result from example 1 to finish the proof.
+        </p>
+      </div>
+    </p>
+
+    <h2 class = "sec"> Linear Programming Problem </h2>
+    <p>
+      Here we consider the Linear Programming Problem of the following form
+      \[
+        \begin{split}
+          \max & {\text{ }c ^T x}\\
+          \text{s.t. } & Ax \le b, x \ge 0
+        \end{split}
+      \]
+    </p>
+    <div class = "claim">
+      If all vertices of \(P(A) = \{x \in \mathbb{R} ^ n| Ax \le b, x \ge 0\}\) are integers, for any \(c\), the linear programming problem has an integer optimal solution. 
+    </div>
+    <div class = "claim">
+      If \(A\) is TU and \(b\) integer, then \(P(A)\) has integer vertices only.
+    </div>
+
+    <h2 class = "sec"> Matching & Node Cover in Bipartite Graphs</h2>
+    <p>
+      The <i>Linear Programming relaxation</i> of the matching problem is (the original problem restricts \(x\) to be either 0 or 1)
+      \[
+        \begin{split}
+        \max &{\mathbf{1}^T x} \\
+        \text{s.t. } &Ax \le \mathbf{1}\\
+        & x \ge 0
+        \end{split}
+      \]
+    </p>
+    <p>
+      Likewise, the node cover problem can be relaxed to
+      \[
+        \begin{split}
+          \min & {\text{ } 1 ^T y} \\
+          \text{s.t. } & A^T y \ge \mathbf{1}\\
+          & y \ge 0
+        \end{split}
+      \]
+    </p>
+    <p>
+      For a bipartite graph, \(A\) is TU &rArr; exists primal-dual pair that is integer, and this is the desired matching/node-cover.
+    </p>
+
+    <h2>References</h2>
+    <p>
+      <a href="http://wwwhome.math.utwente.nl/~uetzm/do/DO_Lecture6.pdf">Lecture Notes, University of Twente</a>
+    </p>
+  </body>
+</html>

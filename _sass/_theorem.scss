@@ -61,3 +61,27 @@
     font-weight: bold;
     font-style: normal;
 }
+
+.example {
+    display: block;
+    margin: 12px 0;
+    font-style: normal;
+}
+.example:before {
+    content: "Example.";
+    font-weight: bold;
+    font-style: normal;
+}
+
+.algorithm {
+    display: block;
+    margin: 12px 0;
+    font-style: normal;
+}
+.algorithm:before {
+    content: "Algorithm.";
+    font-weight: bold;
+    font-style: normal;
+}
+
+
