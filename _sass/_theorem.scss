@@ -84,4 +84,14 @@
     font-style: normal;
 }
 
+.remark {
+    display: block;
+    margin: 12px 0;
+    font-style: normal;
+}
+.remark:before {
+    content: "Remark.";
+    font-weight: bold;
+    font-style: normal;
+}
 

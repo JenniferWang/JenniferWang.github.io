@@ -1,0 +1,91 @@
+---
+layout: post
+tag: Algorithm
+excerpt: We can use greedy algorithms (e.g. Kruskal's algorithm) to find the Minimum Spanning Tree in O(mlog(n)) time. Actually, the same idea extends to a family of problems &#822; matroids optimization problem.
+---
+
+<html>
+  <head>
+    <meta name="google-site-verification" content="Z6gBaBMynRob5VLGKChFgC6J-Qb8lXAtZPYN8o_CBO4" />
+    <title> Matroids & Minimum Spanning Tree</title>
+    <script type="text/javascript" 
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default">
+    </script>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js">
+    </script>
+  </head>
+
+  <body>
+    <h2 class = "sec"> Definitions </h2>
+    <p>
+      A matroid \(M = (E, I)\) is defined on a ground set \(E\) and an independent set \(I\), where \(I\) is a collection of subsets of \(E\) and \(I\) must satisfy two axioms:
+      <ol>
+        <li> If \(X \subseteq Y\), and \(Y \in I\), then \(X \in I\) </li>
+        <li> If \(X, Y \in I\) and \(|Y| > |X|\), then \(\exists e \in Y\backslash X\), s.t. \(X \cup \{e\} \in I\) </li>
+      </ol>
+      <div class = "remark">
+        Each <b>maximal</b> independent set in \(I\) has the same cardinality. We call such independent set <b>base</b>.
+      </div>
+    </p>
+
+    <p>
+      <div class = "example">
+        <b>Graphic Matroids</b>: Given a graph \(G = (V, E)\), define the independent set to be thoses subsets of edges which are forests. 
+      </div>
+
+      <div class = "proof">
+        <ul>
+          <li>If \(Y \in I\) is a forest, then \(\forall X \subseteq Y\) has no circle, indicating that \(X \in I\)</li> 
+          <li> For \(Y \in I\), let \(K(Y)\) denote the number of connected components of \(Y\) (each isolated vertex is regarded as one component), then \(K(Y) = |V| - |Y|\). Thus, if \(X, Y \in I\) and \(|X| < |Y|\), then \(K(X) > K(Y)\). We can always find an edge \(e \in Y \backslash X\) which connects two components in \(X\) and we still have \(\{e\} \cup X \in I\)</li> 
+        </ul>
+      </div>
+    </p>
+
+    <h2 class = "sec"> Matroid Optimization </h2>
+    <p>
+      Given a matroid \(M = (E, I)\) and a cost function \(c : E \rightarrow \mathbb{R}\), find \(S \in I\) which maximizes \(c(S) = \sum_{e \in S} c(e)\). If the cost is nonnegative, then it's equivalent to find the maximum cost base of \(I\). If there is a negative \(e\), then it cannot appear in the optimal set, thus we can simply remove it. 
+
+      <div class = "remark">
+        If we think of this problem on graphic matroids, this is exactly the same as finding the maximum spanning tree (solved by greedy algo).
+      </div>
+    </p>
+    Similar to the algo for finding MST, we can solve this problem using the greedy algorithm :
+    <div class="highlight"><pre><code class="prettyprint" data-lang="python">
+def findMaximumSpanningSets(elements, edgeList):
+  """
+  elements = {elem: cost}
+  """
+  n = len(edgeList)
+  elements = sorted(elements, key = lambda x: elements[x], \
+    reverse = True)
+  res = set()
+  for i in range(n):
+    if isIndependent(res.union(elements[i])):
+      res.update(elements[i])
+  return res
+    </code></pre></div>
+    <p>
+      <div class = "theorem">
+        For any matroid \(M = (E,I)\), the greedy algorithm above finds, for every \(k\), an independent set \(S_k\) of maximum cost among all independent sets of size \(k\).
+      </div>
+      <div class = "proof">
+        Denote the edges in res as \(e_1, ..., e_k\). Suppose not, let \(S_k = \{e_1, ..., e_k\}\) with \(c(e_1) \ge c(e_2) ... \ge c(e_k)\) and suppose \(T_k\) has greater cost, where \(T_k = \{t_1, ..., t_k\}\) (as optimal is a base, \(|T_k| = k\). Let \(p\) be the first index s.t. \(c(t_p) > c(e_p)\). Let \(A = \{t_1, ..., t_p\}\), \(B = \{e_1, ..., e_{p - 1}\}\). Since \(|A| > |B|\), there exists \(t_i \notin B\) s.t. \(t_i + B \in I\), since \(t_i \ge t_p > e_p\), \(t_i\) should be selected when we are choosing \(e_p\).
+      </div>
+
+      <div class = "remark">
+        The greedy algorithm actually characterizes matroids. If \(M\) is an independence system, i.e. it satisfies (Axiom 1), then \(M\) is a matroid iff the greedy algo finds a maximum cost set of size \(k\) for every \(k\) and every cost function.
+      </div>
+    </p>
+
+    <h2 class = "sec"> Step aside for a little while <h2>
+    <p>
+      Given a Minimum Spanning Tree \(T = \{e_1, ..., e_{n - 1}\}\) of a graph \(G = (V, E)\), how to find the second-minimum spanning tree of \(G\)?
+    </p>
+    <p>
+      The straight forward approach is to delete each edge in \(T\) and run the MST algorithm. Repeat \(n - 1\) times, then pick the minimum. The greedy MST algo takes \(O(n^2 \log n)\) time, so the total is \(O(n^3 \log n)\)
+    </p>
+    <p>
+      What about just deleting one edge in \(T\) and try the rest of the edges and see if it's the second-MST. This should cost \(O(n^3)\). As when we delete an edge, we are left with two spanning trees, which should be the corresponding MST in each subgraph. We just need to find another bridge to connect the two trees. <a href="http://web.mit.edu/6.263/www/quiz1-f05-sol.pdf">Here</a> is the solution to this problem which comes in a slightly different way. 
+    </p>
+  </body>
+</html>
