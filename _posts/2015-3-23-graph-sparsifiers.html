@@ -1,6 +1,6 @@
 ---
-layout: page
-tag: Algorithm
+layout: post
+tags: Algorithm Approximation
 excerpt: The running time of many graph algorithms depends on the number of edges. For a specific problem, say cut problem, we can transfer the original dense graph to some sparse graph which gives a good approximation in some measure.
 ---
 <html>
@@ -18,42 +18,40 @@ excerpt: The running time of many graph algorithms depends on the number of edge
     <p>
       The running time of many graph algorithms depends on the number of edges. For a specific problem, say cut problem, we can transfer the original dense graph to some sparse graph which gives a good approximation in some measure.
     </p>
-    <h2 class = "sec">
-      Naive Random Sampling
-    </h2>
-      <p>
-        Given a graph \(G = (V, E)\), for any cut \(S \subset V\), define \(f_G(S)\) as the weight of edges acrossing \(S\) and \(V - S\), i.e. \(Cutsize(S)\). Denote the new graph as \(H = (V, E', W)\), then
-      </p>
-      <ul>
-        <li> 
-          \(E[f_H(S)] = \sum_{e \in Cut(S)}p \cdot \frac{1}{p} = E[f_G(S)] = c\) </li>
-        <li>
-          For a specific cut \(S\), by Chernoff bound
-          \[
-            P(\text{for a specific cut $S$, } |f_H(S) - c| \ge \epsilon c) \le 2e ^{-\epsilon^2 pc / 2}
-          \]
-          If we set the probability \(p = \Omega(\frac{t\log n}{\epsilon^2 c})\), then RHS of the above is less than \(1 / n^t\). 
-          Use union bound and Karger's cut-counting theorem (If \(G\) has a min-cut of size \(c^*\), then the number of cuts of value \(\alpha c^*\) is at most \(n^{2\alpha}\))
-          \[
-            \begin{split}
-              &P(\text{$\exists$ cut $S$, s.t.} |f_H(S) - c| \ge \epsilon c))\\
-              \le & \sum_{\alpha = 1} ^{n^2} P(\text{$\exists$ cut $S$ with value $\alpha c^*$, s.t.} |f_H(S) - c| \ge \epsilon c)) \\
-              \le & \sum_{\alpha = 1} ^{n^2} n^{2\alpha}P(\text{for a specific cut $S$ with value $\alpha c^*$, s.t.} |f_H(S) - c| \ge \epsilon c)))\\
-              \le & \sum_{\alpha = 1} ^{n^2} n^{2\alpha} 2e ^{-\epsilon^2 pc / 2} =  \sum_{\alpha = 1} ^{n^2} n^{2\alpha} 2e ^{-\epsilon^2 p\alpha c^* / 2}
-            \end{split}
-          \] 
-          Under some circumstances, say \(c^* > \log n\), then the above bound becomes
-          \[
-            \begin{split}
-              \le & \sum_{\alpha = 1} ^{n^2} n^{2\alpha} 2e ^{-\epsilon^2 p \alpha \log n / 2} = \sum ^ {n ^2}_{\alpha = 1} n ^ {2\alpha}2\exp (\alpha \log(n)t)\\
-              = & 2 \sum ^{n ^ 2}_{\alpha = 1} \exp (2 \alpha \log(n) - \alpha \log(n)t) =  2 \sum ^{n ^ 2}_{\alpha = 1} \exp (\alpha \log(n)(2 - t))
-            \end{split}
-          \]
-          Now we can set \(t = 5\), then the RHS goes to zero as \(n\) grows.
+    <h2 class = "sec"> Naive Random Sampling </h2>
+    <p>
+      Given a graph \(G = (V, E)\), for any cut \(S \subset V\), define \(f_G(S)\) as the weight of edges acrossing \(S\) and \(V - S\), i.e. \(Cutsize(S)\). Denote the new graph as \(H = (V, E', W)\), then
+    </p>
+    <ul>
+      <li> 
+        \(E[f_H(S)] = \sum_{e \in Cut(S)}p \cdot \frac{1}{p} = E[f_G(S)] = c\) </li>
+      <li>
+        For a specific cut \(S\), by Chernoff bound
+        \[
+          P(\text{for a specific cut $S$, } |f_H(S) - c| \ge \epsilon c) \le 2e ^{-\epsilon^2 pc / 2}
+        \]
+        If we set the probability \(p = \Omega(\frac{t\log n}{\epsilon^2 c})\), then RHS of the above is less than \(1 / n^t\). 
+        Use union bound and Karger's cut-counting theorem (If \(G\) has a min-cut of size \(c^*\), then the number of cuts of value \(\alpha c^*\) is at most \(n^{2\alpha}\))
+        \[
+          \begin{split}
+            &P(\text{$\exists$ cut $S$, s.t.} |f_H(S) - c| \ge \epsilon c))\\
+            \le & \sum_{\alpha = 1} ^{n^2} P(\text{$\exists$ cut $S$ with value $\alpha c^*$, s.t.} |f_H(S) - c| \ge \epsilon c)) \\
+            \le & \sum_{\alpha = 1} ^{n^2} n^{2\alpha}P(\text{for a specific cut $S$ with value $\alpha c^*$, s.t.} |f_H(S) - c| \ge \epsilon c)))\\
+            \le & \sum_{\alpha = 1} ^{n^2} n^{2\alpha} 2e ^{-\epsilon^2 pc / 2} =  \sum_{\alpha = 1} ^{n^2} n^{2\alpha} 2e ^{-\epsilon^2 p\alpha c^* / 2}
+          \end{split}
+        \] 
+        Under some circumstances, say \(c^* > \log n\), then the above bound becomes
+        \[
+          \begin{split}
+            \le & \sum_{\alpha = 1} ^{n^2} n^{2\alpha} 2e ^{-\epsilon^2 p \alpha \log n / 2} = \sum ^ {n ^2}_{\alpha = 1} n ^ {2\alpha}2\exp (\alpha \log(n)t)\\
+            = & 2 \sum ^{n ^ 2}_{\alpha = 1} \exp (2 \alpha \log(n) - \alpha \log(n)t) =  2 \sum ^{n ^ 2}_{\alpha = 1} \exp (\alpha \log(n)(2 - t))
+          \end{split}
+        \]
+        Now we can set \(t = 5\), then the RHS goes to zero as \(n\) grows.
 
-          Without this constrain on \(c^*\), the sparsification could be really bad. As we may expect \(p \cdot\) cut(\(S\)) \(= O(n^2 \frac{t\log n}{\epsilon^2 c})\) edges in \(H\). 
-        </li>
-      </ul>
+        Without this constrain on \(c^*\), the sparsification could be really bad. As we may expect \(p \cdot\) cut(\(S\)) \(= O(n^2 \frac{t\log n}{\epsilon^2 c})\) edges in \(H\). 
+      </li>
+    </ul>
 
     <h2 class = "sec"> Sampling with effective resistance </h2>
       <h3 class = "sec"> Some definitions </h3>

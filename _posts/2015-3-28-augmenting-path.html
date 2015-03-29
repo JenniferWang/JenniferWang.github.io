@@ -28,7 +28,7 @@ excerpt: Augmenting Path Algorithm is used to find maximum match (weighted/unwei
       </div>
     </p>
 
-    <h1 class = "sec" > Algorithm </h1>
+    <h2 class = "sec" > Algorithm </h2>
     <p>
       By <b>Berge's theorem</b>, which states that <i>a matching \(M\) is maximum iff it has no augmenting path </i>, we have the following algorithm
       <div class="highlight"><pre><code class="prettyprint" data-lang="python">
@@ -47,7 +47,7 @@ excerpt: Augmenting Path Algorithm is used to find maximum match (weighted/unwei
       Now the problem narrows down to how to find an augmenting path in \(G\) given \(M\). We consider bipartite graph first and then general graph.
     </p>
 
-      <h2 class = "sec"> Finding Augmenting Path in Bipartite Graph </h2>
+      <h3 class = "sec"> Finding Augmenting Path in Bipartite Graph </h3>
       <p>
         By intuition, we can use DFS to find an augmenting path. Pick an unmatched node as the root and do DFS. Alternatively pick edge in \(M\) and not in \(M\) until finding an unmatched node. However, it does not gaurantee to find an augmenting path if there is one. 
       </p>
@@ -127,13 +127,13 @@ if __name__ == '__main__':
         </code></pre></div>
       </p>
 
-      <h2 class = "sec"> Finding Augmenting Path in General Graph </h2>
+      <h3 class = "sec"> Finding Augmenting Path in General Graph </h3>
       <p>
         More complicated and takes \(O(m n^2)\) time. See <a href = "http://www.cs.dartmouth.edu/~ac/Teach/CS105-Winter05/Notes/kavathekar-scribe.pdf"> this </a> for details.
       </p>
     </p>
 
-    <h1 class = "sec"> Weighted Maximum Matching </h1>
+    <h2 class = "sec"> Weighted Maximum Matching </h2>
       <p>
         The basic idea is to find the augmenting path which increases weights the most every time. Details can be found <a href = "http://www.cs.cornell.edu/Courses/cs6820/2012sp/Handouts/101-110.pdf"> here</a>.
       </p>

@@ -9,6 +9,8 @@
 @import "variables";
 @import "frontpage";
 @import "theorem";
+@import "auto-numbering";
+@import "font-awesome";
 
 // Syntax highlighting @import is at the bottom of this file
 
@@ -77,7 +79,6 @@ h4 {
 p {
   margin: 15px 0;
   font: 18px/1.4 'Open Sans';
-  //line-height: 105%
 }
 
 a {
@@ -85,7 +86,8 @@ a {
   text-decoration: none;
 	cursor: pointer;
   &:hover, &:active {
-    color: $blue;
+    //color: $blue;
+    text-decoration: underline;
   }
 }
 
@@ -233,12 +235,12 @@ nav {
     margin-top: 9px;
     display: block;
     font-size: 16px;
+    color: $darkGray;
   }
 
   a {
     margin-left: 20px;
     color: $darkGray;
-    //color: white;
     text-align: right;
     font-weight: 300;
     letter-spacing: 1px;
