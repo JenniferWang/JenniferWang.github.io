@@ -1,0 +1,171 @@
+---
+layout: post
+tag: Algorithm
+excerpt: 
+---
+
+<html>
+  <head>
+    <meta name="google-site-verification" content="Z6gBaBMynRob5VLGKChFgC6J-Qb8lXAtZPYN8o_CBO4" />
+    <title> Matching</title>
+    <script type="text/javascript" 
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default">
+    </script>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js">
+    </script>
+  </head>
+
+  <body>
+    <h3 class = "sec"> Unweighted Maximum Matching </h3>
+    <p>
+      Use greedy algorthim, we can find a <b>maximal</b> matching, denote it as \(M\). If the <b>maximum</b> matching is \(M^*\), then \(|M| \ge \frac{1}{2} |M^*|\).
+      <div class = "claim"><!-- \footnote{Matching (graph theory), wikipedia} -->
+        If \(A\) and \(B\) are two maximal matching, then \(|A| \ge \frac{1}{2} |B|\) and \(|B| \ge \frac{1}{2} |A|\). 
+      </div>
+      <div class = "proof">
+        Consider \(A\backslash B\) and \(B \backslash A\). For \(\forall e \in B \backslash A\), it can be adjacent to at most 2 edges in \(A \backslash B\) (at the two ends) as \(A\) is a matching. For \(\forall u \in A\backslash B\), there are three cases:
+        <ul>
+          <li> \(u\) has no adjacent edges in \(G\). This means it should appear in both \(A\) and \(B\) \(\Rightarrow\) contradiction. </li>
+          <li> \(u\) has at least one adjacent edge in \(B \backslash A\). </li>
+          <li> \(u\) has adjacent edges, none of which is in \(B \backslash A\). Then \(u + B\) is still a matching, with cardinality larger than \(B\) \(\Rightarrow\) contradiction. </li>
+        </ul>
+        Thus for \(\forall u \in A\backslash B\), it should be adjacent to some edge in \(B\backslash A\). Then we have 
+        \[
+          \begin{gathered}
+          |A \backslash B| \le 2 |B \backslash A| \\
+          |A| = |A \backslash B| + |A \cap B| \le 2 |B \backslash A| + 2|B \cap A| = 2 |B|
+          \end{gathered}
+        \]
+      </div>
+    </p>
+
+    <h3 class = "sec"> Augmenting Path Algorithm </h3> <!-- \footnote{http://www.cs.dartmouth.edu/~ac/Teach/CS105-Winter05/Notes/kavathekar-scribe.pdf} -->
+    <p>
+      <div class = "definition" > A path \(P\) is called an <b>augmenting path</b> for \(M\) if
+        <ul>
+          <li> The two ends of \(P\) are unmatched by \(M\). </li>
+          <li> The edges of \(P\) alternate between edges \(\in M\) and edges \(\notin M\) </li>
+        </ul>
+      </div>
+      By <b>Berge's theorem</b> which states that a matching \(M\) is maximum iff it has no augmenting path, we have the following algorithm
+      <div class="highlight"><pre><code class="prettyprint" data-lang="python">
+  def findMaximumMatching(G):
+    match = {}
+    while True:
+      path = findAugmentingPath(G, match)
+      if not path:
+        break
+      match = flipPath(match, path)
+    return match
+      </code></pre></div>
+
+      Now the problem narrows down to how to find an augmenting path in \(G\) given \(M\). We consider bipartite graph first and then general graph.
+
+      <h4 class = "sec"> Finding Augmenting Path in Bipartite Graph </h4>
+      <p>
+        By intuition, we can use DFS to find an augmenting path. Pick an unmatched node as the root and do DFS. Alternatively pick edge in \(M\) and not in \(M\) until finding an unmatched node. However, it does not gaurantee to find an augmenting path if there is one. 
+      </p>
+      <p>
+        Consider the following undirected graph
+        <div class="highlight"><pre><code class="prettyprint" data-lang="python">
+  vertices = set([1, 2, 3, 4, 5])
+  edgeList = {1: set([2]), 2:set([1, 3, 6]), 3:set([2, 4]), \
+              4: set([3, 5]), 5: set([4, 6]), 6: set([2, 5])}
+  match = {2:3, 3:2, 4:5, 5:4}
+        </code></pre></div>
+        If we start from 6 and follow the path <span>6 &rarr; 5 &rarr; 4 &rarr; 3 &rarr; 2 &rarr; 1 </span> , we find an augmenting path. However, if we follow the path <span> 6 &rarr; 2 &rarr; 3 &rarr; 4 &rarr; 5 </span>, we can not find an augmenting path. The problem is that this is an odd cycle and two unmatched vertexes share one node. If there is no odd cycle, there is no problem. The complexity of the following algorithm is \(O(n / 2)\times O(m)\), where \(|V| = n\) and \(|E| = m\). Hopcroft and Karp improve the time complexity to \(O(m \sqrt{n})\)
+        <div class="highlight"><pre><code class="prettyprint" data-lang="python">
+class BipartiteGraph:
+  def __init__(self, edgeList, leftVertices):
+    self.edgeList = edgeList
+    self.leftVertices = leftVertices
+    self.match = {}
+    self.matched = set()
+    self.unmatched = set(edgeList.keys())
+
+  def _dfs(self, curr, path):
+    if self.augmentingPath:
+      return
+    visited = set(path)
+    if curr in self.leftVertices: 
+      for next in self.edgeList[curr]:
+        if next not in visited:
+          path.append( next )
+          if next in self.unmatched:
+            self.augmentingPath = path[:]
+            return
+          else:
+            self._dfs( next, path )
+          path.pop()
+      return None
+    else:
+      next = self.match[curr]
+      path.append( next )
+      self._dfs( next, path )
+      path.pop()
+    
+  def findAugmentingPath(self):
+    """
+    bipartite graph = left parts union right parts
+    """
+    self.augmentingPath = []
+    for start in self.unmatched.intersection(self.leftVertices):
+      self._dfs(start, [start])
+      if self.augmentingPath:
+        return
+
+  def _flipPath(self, path):
+    for i in range(0, len(path) - 1, 2):
+      self.match[path[i]] = path[i + 1]
+      self.match[path[i + 1]] = path[i]
+
+    self.matched.add(path[0])
+    self.matched.add(path[-1])
+    self.unmatched.discard(path[0])
+    self.unmatched.discard(path[-1])
+
+  def findMaximumMatching(self):
+    while True:
+      self.findAugmentingPath()
+      if not self.augmentingPath:
+        break
+      self._flipPath(self.augmentingPath)
+    return self.match
+
+if __name__ == '__main__':
+  edgeList = {1: set([2, 6]), 2: set([1, 3, 5]), \
+    3: set([2]), 4: set([5]), 5: set([2, 4, 6]), 6: set([1, 5])}
+  leftVertices = set([1, 3, 5])
+  bipartite = BipartiteGraph(edgeList, leftVertices)
+  print bipartite.findMaximumMatching()
+        </code></pre></div>
+      </p>
+      <h4 class = "sec"> Finding Augmenting Path in General Graph </h4>
+      <p>
+        More complicated and takes \(O(m n^2)\) time. See <a href = "http://www.cs.dartmouth.edu/~ac/Teach/CS105-Winter05/Notes/kavathekar-scribe.pdf"> this </a> for details.
+      </p>
+    </p>
+
+    <h3 class = "sec"> Weighted Maximum Matching </h3>
+      <p>
+        The basic idea is to find the augmenting path which increases weights the most every time. Details can be found <a href = "http://www.cs.cornell.edu/Courses/cs6820/2012sp/Handouts/101-110.pdf"> here</a>.
+      </p>
+      <p>
+        Another method is MaxFlow. But it can only find maximum weight matching in a bipartite graph.
+      </p>
+
+    <h3 class = "sec"> Minimum Weight Perfect Matching and Cycle Cover </h3>
+    <p>
+      A <b>perfect matching</b> is a matching which matches all vertices of the graph. That is, every vertex of the graph is incident to exactly one edge of the matching. <!-- \footnote{Matching (graph theory), wikipediea} --> The mini-weight perfect matching problem can be solved in polynomial time. 
+    </p>
+    <p>
+      <div class = "definition"> <b>minimum weight cycle cover</b> of a graph: Let \(H = (V, E)\) be a directed graph with non-negative arc weights given by \(w: E \rightarrow R ^+\). 
+      </div>
+      We wish to find a minimum weight collection of vertex-disjoint directed cycles in \(H\) such that every vertex is in exactly one of those cycles.<!--  \footnote{HW0/6, Spring 2011, CS 598CSC, University of Illinois}  -->We need this to give an approximation algo to the Asymmetric Traveling Salesman Problem (ATSP).
+    </p>
+    <p>
+      <b>Algorithm</b>:
+        For each node \(v \in V\), split it into \(v^+\) and \(v^-\), where \(v^+\) is the `in-node' and \(v^-\) is the `out-node'. Solve the minimum perfect matching problem on the new graph. Done. TODO 
+    </p>
+  </body>
+</html>
