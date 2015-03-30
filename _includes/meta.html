@@ -17,4 +17,5 @@
     <meta property="twitter:title" content="{{ page.title }}" />
     {% endif %}
 
-    <meta property="og:image" content="{% if page.thumbnail %}{{ page.thumbnail | prepend: site.baseurl | prepend: site.url }}{% else %}{{ {{baseurl}}/avatar | prepend: site.baseurl | prepend: site.url }}{% endif %}">
+    <meta property="og:image" content="{% if page.thumbnail %}{{ page.thumbnail | prepend: site.baseurl | prepend: site.url }}{% else %}{{ {{site.baseurl}}/thumbnail | prepend: site.baseurl | prepend: site.url }}{% endif %}">
+
