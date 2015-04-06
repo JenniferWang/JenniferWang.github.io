@@ -1,0 +1,73 @@
+---
+layout: post
+tag: Graphics
+excerpt: Ray intersection is a very basic problem in computer graphics. In the ray-tracing algorithm, we need it to determine whether the ray hits some object.
+---
+
+<html>
+  <head>
+    <meta name="google-site-verification" content="Z6gBaBMynRob5VLGKChFgC6J-Qb8lXAtZPYN8o_CBO4" />
+    <title> Ray Intersection Algorithm</title>
+    <script type="text/javascript" 
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default">
+    </script>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js">
+    </script>
+  </head>
+
+  <body>
+    <h2 class="sec"> Ray-Convex Polyhedron </h2>
+    <p>
+      A convex polyhedron can be represented as the intersecton of halfspaces. This can be further written in linear programming form. 
+      \[
+        Ax \le b
+      \]
+      Thus, testing whether a ray \(\vec{c} + t \vec{v} \) or line segment intersects with the convex object or not can be done efficiently in all dimensions. Thus, it is very useful to have convex bounding containers for more complicated objects.
+    </p>
+
+      <h3 class="sec"> General Case </h3>
+        <p>
+          In \(n\)-dimension, testing whether the ray intersects the convex object is equivalent to test whether there is a feasible \(t\) that satisfies \(A(\vec{c} + t \vec{v}) \le b\). That is to find a \(t\) s.t. for all \(i = 1, 2, ..., n\)
+          \[
+            [Av]_i t \le [b - Ac]_i
+          \]
+          <a href="http://en.wikipedia.org/wiki/Intersection_of_a_polyhedron_with_a_line">Solving</a> the unequalities, we have all feasible \(t\) in range
+          \[
+            \Big[ \max_{i: [Av]_i\le 0} \frac{[b - Ac]_i}{[Av]_i}, \min_{i: [Av]_i \ge 0} \frac{[b - Ac]_i}{[Av]_i}\Big]
+          \]
+          If the interval is empty, the ray doesn't intersects with the object. This actually has a straight-forward geometrical interpretation.
+        </p>
+
+      <h3 class = "sec"> 2D Convex Polygon </h3>
+        <p>
+          Suppose we define polygon by \(v_0\), \(v_1\), \(v_2\), \(v_3\), \(v_4\) = \(v_0\). The left-hand-side of edge \((v_i, v_{i + 1})\) is defined to be the inner part of the polygon. Let \(n_i\) be the <i>normal</i> of edge \((v_i, v_{i + 1})\), which points to the outside. Then all the points 'below' the line \((v_i, v_{i + 1})\) is defined by 
+            \[
+              \begin{split}
+                &(x - v_i) \cdot n_i \le 0 \\
+                & n_i \cdot x \le v_i \cdot n_i 
+              \end{split}
+            \] 
+          It's easy to get \(n_i\):
+            \[
+              \begin{split}
+                &d_i = \frac{v_{i + 1} - v_i}{||v_{i + 1} - v_i||} = (d_x, d_y)\\
+                &n_i = (d_y, -d_x)
+              \end{split}
+            \]
+          Putting all the inequations together, we get the linear programming form.
+        </p>
+        <p>
+          Thus, \(\max_{i: [Av]_i\le 0} \frac{[b - Ac]_i}{[Av]_i}\) is actually the last intersection point where the ray <i>may</i> enter the object. And \(\min_{i: [Av]_i \ge 0} \frac{[b - Ac]_i}{[Av]_i}\) is the first intersection point where the ray <i>may</i> leave the object.
+        </p>
+
+      <h3 class = "sec"> 3D Convex Polyhedron </h3>
+        <p>
+          The geometrical explanation is similar to 2D case. One thing that concerns me is how to represent the object in 3D. Every face of a polyhedron is a feasible polygon that satisifes all the inequalities, and what we need is basically the normal of the face and one of the point on this polygon.
+        </p>
+
+    <h2 class="sec"> Ray-Triangle Intersection </h2>
+      <p>
+        This is a special case of Ray-Convex Polyhedron intersection problem. But for 3D triangles, we could use a more basic observation to solve the problem. The three vertexes (vectors) of a triangle actually form a basis of 3D space. Now represent an arbitrary direction vector of the ray in this basis. If all the coordinates are positive, then the ray intersects with the triangle. A fast algorithm using this idea is <a href="http://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm">Moller-Trumbore algorithm </a>
+      </p>
+  </body>
+</html>
