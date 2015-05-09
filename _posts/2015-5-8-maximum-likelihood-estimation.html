@@ -1,0 +1,87 @@
+---
+layout: post
+tag: statistics
+excerpt: Maximum Likelihood Estimation is a very common and useful tool to estimate parameters for a statistical model. But why it is good? 
+---
+
+<html>
+  <head>
+    <meta name="google-site-verification" content="Z6gBaBMynRob5VLGKChFgC6J-Qb8lXAtZPYN8o_CBO4" />
+    <title> A Memo on Maximum Likelihood Estimation</title>
+    <script type="text/javascript" 
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default">
+    </script>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js">
+    </script>
+  </head>
+
+  <body>
+    <h2 class="sec"> Maximum Likelihood Estimation </h2>
+      <h3 class="sec"> Definition </h3>
+        <p>
+          <div>
+            Here is a quick review of MLE.
+          </div>
+          <div class = "definition">
+            Suppose \(x_1, x_2, ..., x_n\) are i.i.d. with density function \(f(x|\theta)\) for \(\theta \in \Theta\), for which \(\theta^*\) is the true unknown parameter. We need to give an estimator \(\hat{\theta} = \hat{\theta}(x_1, x_2, ..., x_n)\). And the likelihood function is defined to be 
+            \[
+              L_n(\theta) = L_n(\theta; x_1, ..., x_n) = \prod_{i = 1} ^ {n} f(x_i|\theta)
+            \]
+            MLE estimator is  
+            \[
+              \hat{\theta} _n = \arg\max_\theta L_n(\theta)
+            \]
+        </div>
+        </p>
+
+      <h3 class = "sec"> Properties </h3>
+        <p>
+          <ul>
+            <li>
+              <em>Intuition.</em> MLE is consistent with human intuition -- what happens is simply because it is more likely to happen.
+            </li>
+            <li>
+              <em>Consistency.</em> MLE has great large sample properties. (a 'p' over the right arrow means converge in probability)
+                \[
+                  \hat{\theta} _n \overset{\mbox{P}}{\longrightarrow} \theta ^ *, \text{ as \(n \rightarrow \infty \)}
+                \]
+              Consistency also shows that MLE estimator is <b>asymptotically unbiased</b> though it is biased in general.
+              <div class = "proof">
+                convergence in probability &rArr; convergence in law &rArr; \(E[\hat{\theta} _n] \rightarrow \theta ^ *\)
+              </div>
+            </li>
+            <li>
+              <em>Central Limit Theorem.</em> CLT depicts the asymptotic efficiency of the estimator.
+              \[
+                \sqrt{n} (\hat{\theta} _n - \theta ^ *) \overset{\mbox{D}}{\longrightarrow} N\Big(0, \frac{1}{I(\theta ^ *)}\Big),
+              \]
+              where \(I(\theta ^ *)\) is the fisher information 
+              \[
+                I(\theta) = \int ^ {+\infty} _{-\infty} \frac{(\frac{\mathrm{d}}{\mathrm{d}\theta} f(x|\theta)) ^ 2}{f(x|\theta)}\mathrm{d}x
+              \]
+              <div class = "remark">
+                <a href = "/documents/Fisher_info.pdf"> Cramer-Rao lower bound </a> shows that MLE estimator has the smallest variance among all asymptotically unbiased estimators. 
+              </div>
+              <div class = "remark">
+                We can use Cramer-Rao lower bound to test whether our estimation of the parameter is good. Say we have a model \(f(x|\theta ^ *\) and we have estimation \(\hat{\theta}_n\), we can compute \(1 / I(\hat{\theta}_n)\) and empirical variance of \(\hat{\theta}_n)\). If they are close, then it indicates that the estimation is good.
+              </div>
+            </li>
+            <li>
+              <em>Bayesian.</em> MLE also makes sense in the Bayesian view where \(\theta \) is a random variable independent of the samples.
+            </li>
+          </ul>
+        </p>
+
+
+    <h2>References</h2>
+    <p>
+      <ul>
+        <li><a href="http://en.wikipedia.org/wiki/Intersection_of_a_polyhedron_with_a_line">Intersection of a polyhedron with a line, wikipedia</a>
+        </li>
+        <li>
+          <a href="http://geomalgorithms.com/a13-_intersect-4.html">Intersect a Segment & a Convex Polygon</a>
+        </li>
+      </ul>
+    </p>
+  </body>
+</html>
